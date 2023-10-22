@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
@@ -54,13 +55,20 @@ public class LoanServiceImpl implements LoanService {
     }
 
     @Override
-    public List<Loan> findAllByCustomer(UUID customerId) {
-        Customer customer = customerRepository.findById(customerId)
+    public List<LoanResponse> findAllByCustomer(String authorizationHeader) {
+
+        UUID keycloakUserId = jwtAuthConverter.convertTokenToUserInfo(authorizationHeader);
+
+        Customer customer = customerRepository.findByKeycloakUserId(keycloakUserId)
                 .orElseThrow(
                         () -> new NotFoundException("Customer not found")
                 );
-        return loanRepository.findAllByCustomer(customer);
+        List<Loan> loans = loanRepository.findAllByCustomer(customer);
+        return loans.stream()
+                .map(loanMapper::toLoanResponse)
+                .collect(Collectors.toList());
     }
+
 
     @Override
     public LoanResponse findByLoanId(UUID id) {

@@ -38,9 +38,10 @@ public class LoanController {
         return ResponseEntity.ok().body(loan);
     }
 
-    @GetMapping("/customer/{customerId}")
-    public ResponseEntity<List<Loan>> getLoanByCustomerId(@PathVariable UUID customerId) {
-        List<Loan> loans = loanService.findAllByCustomer(customerId);
+    @GetMapping("/customer")
+    public ResponseEntity<List<LoanResponse>> getLoanByCustomerId(
+                                                                  @RequestHeader("Authorization") String authorizationHeader) {
+        List<LoanResponse> loans = loanService.findAllByCustomer(authorizationHeader);
         return ResponseEntity.ok().body(loans);
     }
 

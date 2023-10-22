@@ -11,7 +11,7 @@ import java.util.UUID;
 public interface LoanService {
     Loan createLoan(CreateLoanRequest loan, String token);
 
-    List<Loan> findAllByCustomer(UUID customerId);
+    List<LoanResponse> findAllByCustomer(String authorizationHeader);
 
     LoanResponse findByLoanId(UUID customerId);
 
